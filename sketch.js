@@ -30,7 +30,7 @@ function preload() {
   obs2 = loadImage("Images/DownObs/carDon2.png");
   obs3 = loadImage("Images/UpObs/carUp1.png");
   obs4 = loadImage("Images/UpObs/carUp2.png");
-  
+
   engine = loadSound("Sounds/Engine.mp3");
 }
 
@@ -51,6 +51,7 @@ function setup() {
 
 function draw() {
   background(0);
+  console.log(rideGroup);
 
   if (bg.y > 1000) {
     bg.y = 500
@@ -62,7 +63,7 @@ function draw() {
 
   if (keyWentDown('w')) {
     driver.velocityY = -5;
-
+    engine.play();
 
   }
 
@@ -105,10 +106,21 @@ function draw() {
 
   }
 
+  if (driver.isTouching(rideGroup)) {
+    rideGroup[0].destroy();
+    completed++;
+  }
+
   spawnRide();
   spawnCar();
 
+  if(rideGroup.length != 0){
+  circle(rideGroup[0].x,rideGroup[0].y,100);
+  }
+  
   drawSprites();
+
+  
 
   textSize(30);
   fill("red")
@@ -117,9 +129,10 @@ function draw() {
 }
 
 function spawnRide() {
-  if (frameCount % 500 === 0) {
+  if (frameCount % 100 === 0) {
     var ride = createSprite(650, -100);
     ride.velocityY += 3;
+
 
     var rand = Math.round(random(1, 3));
     switch (rand) {
