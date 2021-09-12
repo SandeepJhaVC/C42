@@ -1,19 +1,14 @@
-var driver, car;
-var bgimg, bg;
+var driver, car, bgimg, bg;
 var rides = 0;
 var completed = 0;
-
 var ride1img, ride2img, ride3img;
 var right, left;
 var PLAY = 1;
 var END = 0;
 var gameState = PLAY;
-
 var engine;
-
-var rideGroup;
-
-var obs1, obs2, ob3, obs4;
+var rideGroup, carGroup;
+var obs1, obs2, obs3, obs4;
 
 function preload() {
   bgimg = loadImage("Images/Road.png");
@@ -46,6 +41,7 @@ function setup() {
   driver.addImage(car);
 
   rideGroup = new Group();
+  carGroup = new Group();
 
 }
 
@@ -69,6 +65,7 @@ function draw() {
 
   if (keyWentUp('w')) {
     driver.velocityY = 0;
+    engine.stop();
 
   }
 
@@ -106,21 +103,17 @@ function draw() {
 
   }
 
-  if (driver.isTouching(rideGroup)) {
-    rideGroup[0].destroy();
-    completed++;
+  for (var i = 0; i < rideGroup.length; i++) {
+    if (rideGroup.get(i).isTouching(driver)) {
+      rideGroup.get(i).destroy();
+      completed++;
+    }
   }
 
   spawnRide();
   spawnCar();
 
-  if(rideGroup.length != 0){
-  circle(rideGroup[0].x,rideGroup[0].y,100);
-  }
-  
   drawSprites();
-
-  
 
   textSize(30);
   fill("red")
@@ -129,7 +122,7 @@ function draw() {
 }
 
 function spawnRide() {
-  if (frameCount % 100 === 0) {
+  if (frameCount % 400 === 0) {
     var ride = createSprite(650, -100);
     ride.velocityY += 3;
 
@@ -145,7 +138,7 @@ function spawnRide() {
     }
 
     ride.scale = 0.8;
-    //ride.lifetime = 300;
+    ride.lifetime = 400;
     rideGroup.add(ride);
   }
   if (frameCount % 300 === 0) {
@@ -163,7 +156,7 @@ function spawnRide() {
 
     ride2.velocityY += 3;
     ride2.scale = 0.7;
-    //ride2.lifetime = 50;
+    ride2.lifetime = 400;
     rideGroup.add(ride2);
   }
 
@@ -183,6 +176,8 @@ function spawnCar() {
     }
 
     obs.velocityY += 3;
+    obs.lifetime = 400;
+    carGroup.add(obs);
   }
   if (frameCount % 800 === 0) {
     var obss = createSprite(1200, 1200);
@@ -197,5 +192,7 @@ function spawnCar() {
     }
 
     obss.velocityY -= 3;
+    obss.lifetime = 400;
+    carGroup.add(obss);
   }
 }
