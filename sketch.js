@@ -9,6 +9,10 @@ var gameState = PLAY;
 var engine;
 var rideGroup, carGroup;
 var obs1, obs2, obs3, obs4;
+var ride3;
+var circle;
+var rideGroup2;
+var finish, leaderboard;
 
 function preload() {
   bgimg = loadImage("Images/Road.png");
@@ -27,6 +31,10 @@ function preload() {
   obs4 = loadImage("Images/UpObs/carUp2.png");
 
   engine = loadSound("Sounds/Engine.mp3");
+  finish = loadSound("Sounds/Finish.mp3")
+  leaderboard = loadSound("Sounds/Leaderboard.mp3");
+
+  circle = loadImage("Images/Rides/rideCircle.png");
 }
 
 function setup() {
@@ -42,12 +50,13 @@ function setup() {
 
   rideGroup = new Group();
   carGroup = new Group();
+  rideGroup2 = new Group();
 
 }
 
 function draw() {
   background(0);
-  console.log(rideGroup);
+  //console.log(rideGroup);
 
   if (bg.y > 1000) {
     bg.y = 500
@@ -82,33 +91,40 @@ function draw() {
   if (keyWentDown('a')) {
     driver.velocity.x -= 5;
     driver.addImage(left);
+    engine.play();
 
   }
 
   if (keyWentUp('a')) {
     driver.velocity.x = 0;
     driver.addImage(car);
+    engine.stop();
 
   }
 
   if (keyWentDown('d')) {
     driver.velocity.x += 5;
     driver.addImage(right);
+    engine.play();
 
   }
 
   if (keyWentUp('d')) {
     driver.velocity.x = 0;
     driver.addImage(car);
+    engine.stop();
 
   }
 
-  for (var i = 0; i < rideGroup.length; i++) {
-    if (rideGroup.get(i).isTouching(driver)) {
-      rideGroup.get(i).destroy();
+  for (var i = 0; i < rideGroup2.length; i++) {
+    if (rideGroup2.isTouching(driver)) {
+      rideGroup2.get(i).destroy();
       completed++;
+      leaderboard.play()
     }
   }
+
+  driver.collide(carGroup, crash)
 
   spawnRide();
   spawnCar();
@@ -121,43 +137,57 @@ function draw() {
 
 }
 
+function crash(driver, obs){
+finish.play();
+}
+
 function spawnRide() {
-  if (frameCount % 400 === 0) {
-    var ride = createSprite(650, -100);
-    ride.velocityY += 3;
+  if (frameCount % 200 === 0) {
+    var num = Math.round(random(1, 2));
+    console.log(num);
+    if (num === 1) {
+      ride3 = createSprite(650, -100, 150, 150);
+      ride3.velocityY += 3;
+      ride3.addImage(circle);
+      rideGroup2.add(ride3);
+    } else if (num === 2) {
+      var ride = createSprite(650, -100);
+      ride.velocityY += 3;
 
 
-    var rand = Math.round(random(1, 3));
-    switch (rand) {
-      case 1: ride.addImage(ride1img);
-        break;
-      case 2: ride.addImage(ride2img);
-        break;
-      case 3: ride.addImage(ride3img);
-      default: break;
+      var rand = Math.round(random(1, 3));
+      switch (rand) {
+        case 1: ride.addImage(ride1img);
+          break;
+        case 2: ride.addImage(ride2img);
+          break;
+        case 3: ride.addImage(ride3img);
+        default: break;
+      }
+
+      ride.scale = 0.8;
+      ride.lifetime = 400;
+      rideGroup.add(ride);
+    }
+    if (frameCount % 300 === 0) {
+      var ride2 = createSprite(1350, -100);
+
+      var rand = Math.round(random(1, 3));
+      switch (rand) {
+        case 1: ride2.addImage(ride1img);
+          break;
+        case 2: ride2.addImage(ride2img);
+          break;
+        case 3: ride2.addImage(ride3img);
+        default: break;
+      }
+
+      ride2.velocityY += 3;
+      ride2.scale = 0.7;
+      ride2.lifetime = 400;
+      rideGroup.add(ride2);
     }
 
-    ride.scale = 0.8;
-    ride.lifetime = 400;
-    rideGroup.add(ride);
-  }
-  if (frameCount % 300 === 0) {
-    var ride2 = createSprite(1350, -100);
-
-    var rand = Math.round(random(1, 3));
-    switch (rand) {
-      case 1: ride2.addImage(ride1img);
-        break;
-      case 2: ride2.addImage(ride2img);
-        break;
-      case 3: ride2.addImage(ride3img);
-      default: break;
-    }
-
-    ride2.velocityY += 3;
-    ride2.scale = 0.7;
-    ride2.lifetime = 400;
-    rideGroup.add(ride2);
   }
 
 }
