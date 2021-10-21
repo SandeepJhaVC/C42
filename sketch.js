@@ -59,7 +59,7 @@ function setup() {
 
   bg = createSprite(width/2, height/2);
   bg.addImage(bgimg);
-  bg.scale = 0.5;
+  bg.scale = height/2000;
   bg.velocityY += 3;
 
   driver = createSprite(width/2, height/1.2);
@@ -72,15 +72,15 @@ function setup() {
 
   life1 = createSprite(width/50, width/10);
   life1.addImage(heart);
-  life1.scale = 0.5;
+  life1.scale = width/5000;
 
   life2 = createSprite(width/17, width/10);
   life2.addImage(heart);
-  life2.scale = 0.5;
+  life2.scale = width/5000;
 
   life3 = createSprite(width/10, width/10);
   life3.addImage(heart);
-  life3.scale = 0.5;
+  life3.scale = width/5000;
 
 }
 
