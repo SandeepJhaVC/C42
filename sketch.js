@@ -12,10 +12,9 @@ var obs1, obs2, obs3, obs4;
 var ride3;
 var circle;
 var rideGroup2;
-var finish, leaderboard;
 var place;
 var back;
-var death = 3;
+var death = 0;
 var game;
 var hit;
 var achieve, achieve2;
@@ -23,6 +22,8 @@ var dropimg;
 var dropGroup;
 var heart;
 var life;
+var ride1,ride2,ride3,ride4,ride;
+var drop,drop2;
 
 function preload() {
   bgimg = loadImage("Images/Road.png");
@@ -41,8 +42,6 @@ function preload() {
   obs4 = loadImage("Images/UpObs/carUp2.png");
 
   engine = loadSound("Sounds/Engine.mp3");
-  finish = loadSound("Sounds/Finish.mp3");
-  leaderboard = loadSound("Sounds/Leaderboard.mp3");
 
   circle = loadImage("Images/Rides/rideCircle.png");
 
@@ -52,18 +51,18 @@ function preload() {
   achieve2 = loadSound("Sounds/achieve2.mp3");
 
   dropimg = loadImage("Images/Rides/drop.png");
-  heart = loadImage("Images/Rides/life.png")
+  heart = loadImage("Images/Rides/life.png");
 }
 
 function setup() {
-  createCanvas(2000, 1000);
+  createCanvas(windowWidth, windowHeight);
 
-  bg = createSprite(1000, 500);
+  bg = createSprite(width/2, height/2);
   bg.addImage(bgimg);
   bg.scale = 0.5;
   bg.velocityY += 3;
 
-  driver = createSprite(1000, 800);
+  driver = createSprite(width/2, height/1.2);
   driver.addImage(car);
 
   rideGroup = new Group();
@@ -71,17 +70,17 @@ function setup() {
   rideGroup2 = new Group();
   dropGroup = new Group();
 
-  life1 = createSprite(200, 500);
+  life1 = createSprite(width/50, width/10);
   life1.addImage(heart);
   life1.scale = 0.5;
 
-  life3 = createSprite(300, 500);
-  life3.addImage(heart);
-  life3.scale = 0.5;
-
-  life2 = createSprite(400, 500);
+  life2 = createSprite(width/17, width/10);
   life2.addImage(heart);
   life2.scale = 0.5;
+
+  life3 = createSprite(width/10, width/10);
+  life3.addImage(heart);
+  life3.scale = 0.5;
 
 }
 
@@ -89,21 +88,12 @@ function draw() {
   background(0);
   //console.log(rideGroup);
 
-  //game.play();
+  
   if (bg.y > 1000) {
     bg.y = 500
   }
 
-  if (driver.y < -1060) {
-    bg.y = -1060;
-  }
-  if (death > 0) {
-
-    if (death === 2) {
-      life2.destroy();
-    } else if (death === 1) {
-      life3.destroy();
-    }
+  if (death < 3) {
 
     if (keyWentDown('w')) {
       driver.velocityY = -5;
@@ -162,7 +152,7 @@ function draw() {
         if (rides < 4) {
           rideGroup2[i].destroy();
           rides++;
-          achieve.play();
+          achieve2.play();
         }
       }
     }
@@ -171,26 +161,31 @@ function draw() {
       if (rideGroup[i].isTouching(driver)) {
         rideGroup[i].destroy();
         hit.play();
-        death--;
+        death++;
       }
     }
 
     for (var i = 0; i < dropGroup.length; i++) {
       if (dropGroup[i].isTouching(driver) && rides > 0) {
         dropGroup[i].destroy();
-        achieve2.play();
+        achieve.play();
         rides--;
         completed++;
       }
     }
 
-    driver.collide(carGroup, crash)
+    driver.collide(carGroup, crash);
 
+    if (death === 1) {
+      life3.destroy();
+    } else if (death === 2) {
+      life2.destroy();
+    }
 
     spawnRide();
     spawnCar();
     dropPoint();
-  } else if (death === 0) {
+  } else if (death === 3) {
     bg.velocityY = 0;
     driver.velocityY = 0;
     driver.velocityX = 0;
@@ -202,17 +197,18 @@ function draw() {
     hit.stop();
     back.stop();
     life1.destroy();
-    //game.stop();
   }
   drawSprites();
 
-  textSize(30);
-  fill("red")
-  if (death === 0) {
-    text("Game Over", 1000, 500);
+  textSize(50);
+  
+  if (death === 3) {
+    fill("red");
+    text("Game Over", width/2.3, height/2);
   }
-  if(completed === 1){
-    text("congratulations you won", 1000,500);
+  if(completed === 5){
+    fill("lightGreen");
+    text("congratulations you won", width/2.79, height/2);
     bg.velocityY = 0;
     driver.velocityY = 0;
     driver.velocityX = 0;
@@ -225,28 +221,46 @@ function draw() {
     back.stop();
     console.log(completed);
   }
-  text("current rides: " + rides, 100, 100);
-  text("completed rides: "+completed, 100, 200);
+  push();
+  textSize(25);
+  fill("orange");
+  text("current rides: " + rides, width/100, height/20);
+  text("completed rides: "+completed, width/100, height/10);
+  pop();
+  textSize(20);
+  push();
+  fill("darkOrange");
+  text("Use W,A,S,D to move your RED car",width/100, height/3.5);
+  text("You can only pick those people with a red circle on them",width/100, height/3.2);
+  text("You have to touch the green circle to complete a ride",width/100, height/2.9);
+  pop();
+  push();
+  fill("violet")
+  text("You have to complete 5 rides to win",width/100, height/2.5);
+  text("If you use all your hearts then you will lose this game",width/100, height/2.3);
+  text("You have Only 3 hearts",width/100, height/2.1);
+  pop();
 
 }
 
 function crash(driver, obs) {
   hit.play();
-  death--;
+  death++;
 }
 
-function spawnRide() {
+function spawnRide() {console.log(ride4);
   if (frameCount % 200 === 0) {
     var num = Math.round(random(1, 2));
     if (num === 1) {
-      ride3 = createSprite(650, -100, 150, 150);
+      ride3 = createSprite(width/3.1, height/1000);
       ride3.velocityY += 3;
       ride3.addImage(circle);
+      ride3.scale = 0.8;
+      ride3.lifetime = 400;
       rideGroup2.add(ride3);
     } else if (num === 2) {
-      var ride = createSprite(650, -100);
+      var ride = createSprite(width/3.1, height/1000);
       ride.velocityY += 3;
-
 
       var rand = Math.round(random(1, 3));
       switch (rand) {
@@ -262,15 +276,19 @@ function spawnRide() {
       ride.lifetime = 400;
       rideGroup.add(ride);
     }
+  }
+
     if (frameCount % 300 === 0) {
       var num = Math.round(random(1, 2));
       if (num === 1) {
-        ride4 = createSprite(1350, -100, 150, 150);
+        ride4 = createSprite(width/1.48, height/1000);
         ride4.velocityY += 3;
         ride4.addImage(circle);
+        ride4.scale = 0.8;
+        ride4.lifetime = 400
         rideGroup2.add(ride4);
       } else if (num === 2) {
-        var ride2 = createSprite(1350, -100);
+        var ride2 = createSprite(width/1.48, height/1000);
 
         var rand = Math.round(random(1, 3));
         switch (rand) {
@@ -283,7 +301,7 @@ function spawnRide() {
         }
 
         ride2.velocityY += 3;
-        ride2.scale = 0.7;
+        ride2.scale = 0.8;
         ride2.lifetime = 400;
         rideGroup.add(ride2);
       }
@@ -291,11 +309,10 @@ function spawnRide() {
 
   }
 
-}
 
 function spawnCar() {
-  if (frameCount % 700 === 0) {
-    var obs = createSprite(800, -100);
+  if (frameCount % 700=== 0) {
+    var obs = createSprite(width/2.5, height/1000);
 
     var rand = Math.round(random(1, 2));
     switch (rand) {
@@ -311,7 +328,7 @@ function spawnCar() {
     carGroup.add(obs);
   }
   if (frameCount % 800 === 0) {
-    var obss = createSprite(1200, 1200);
+    var obss = createSprite(width/1.65, height/0.9);
 
     var rand = Math.round(random(1, 2));
     switch (rand) {
@@ -329,9 +346,8 @@ function spawnCar() {
 }
 
 function dropPoint() {
-  var drop;
   if (frameCount % 500 === 0) {
-    drop = createSprite(800, -100, 150, 150);
+    drop = createSprite(width/2.56, height/1000);
     drop.velocityY += 3;
     drop.addImage(dropimg);
     drop.scale = 0.7;
@@ -340,12 +356,12 @@ function dropPoint() {
     dropGroup.add(drop);
   }
   if (frameCount % 700 === 0) {
-    drop = createSprite(1200, -100, 150, 150);
-    drop.velocityY += 3;
-    drop.addImage(dropimg);
-    drop.scale = 0.7;
-    driver.depth += drop.depth;
-    drop.lifetime = 400;
-    dropGroup.add(drop);
+    drop2 = createSprite(width/1.65,height/1000);
+    drop2.velocityY += 3;
+    drop2.addImage(dropimg);
+    drop2.scale = 0.7;
+    driver.depth += drop2.depth;
+    drop2.lifetime = 400;
+    dropGroup.add(drop2);
   }
 }
