@@ -64,6 +64,7 @@ function setup() {
 
   driver = createSprite(width/2, height/1.2);
   driver.addImage(car);
+  driver.scale = height/1000;
 
   rideGroup = new Group();
   carGroup = new Group();
