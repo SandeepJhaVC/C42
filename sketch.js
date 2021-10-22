@@ -59,27 +59,27 @@ function setup() {
 
   bg = createSprite(width/2, height/2);
   bg.addImage(bgimg);
-  bg.scale = height/2000;
+  bg.scale = width/5000;
   bg.velocityY += 3;
 
   driver = createSprite(width/2, height/1.2);
   driver.addImage(car);
-  driver.scale = height/5000;
+  driver.scale = width/2500;
 
   rideGroup = new Group();
   carGroup = new Group();
   rideGroup2 = new Group();
   dropGroup = new Group();
 
-  life1 = createSprite(width/50, width/10);
+  life1 = createSprite(width/50, height/6.5);
   life1.addImage(heart);
   life1.scale = width/5000;
 
-  life2 = createSprite(width/17, width/10);
+  life2 = createSprite(width/17, height/6.5);
   life2.addImage(heart);
   life2.scale = width/5000;
 
-  life3 = createSprite(width/10, width/10);
+  life3 = createSprite(width/10, height/6.5);
   life3.addImage(heart);
   life3.scale = width/5000;
 
@@ -90,7 +90,7 @@ function draw() {
   //console.log(rideGroup);
 
   
-  if (bg.y > 1000) {
+  if (bg.y > 800) {
     bg.y = 500
   }
 
@@ -201,15 +201,15 @@ function draw() {
   }
   drawSprites();
 
-  textSize(50);
+  textSize(width/80);
   
   if (death === 3) {
     fill("red");
-    text("Game Over", width/2.3, height/2);
+    text("Game Over", width/2.1, height/2);
   }
   if(completed === 5){
     fill("lightGreen");
-    text("congratulations you won", width/2.79, height/2);
+    text("congratulations you won", width/2.2, height/2);
     bg.velocityY = 0;
     driver.velocityY = 0;
     driver.velocityX = 0;
@@ -223,23 +223,23 @@ function draw() {
     console.log(completed);
   }
   push();
-  textSize(25);
+  textSize(width/100);
   fill("orange");
   text("current rides: " + rides, width/100, height/20);
   text("completed rides: "+completed, width/100, height/10);
   pop();
-  textSize(20);
+  textSize(width/100);
   push();
   fill("darkOrange");
-  text("Use W,A,S,D to move your RED car",width/100, height/3.5);
-  text("You can only pick those people with a red circle on them",width/100, height/3.2);
-  text("You have to touch the green circle to complete a ride",width/100, height/2.9);
+  text("Use W,A,S,D to move your RED car",width/100, height/5);
+  text("You can only pick those people with a red circle on them",width/100, height/4.5);
+  text("You have to touch the green circle to complete a ride",width/100, height/4);
   pop();
   push();
   fill("violet")
-  text("You have to complete 5 rides to win",width/100, height/2.5);
-  text("If you use all your hearts then you will lose this game",width/100, height/2.3);
-  text("You have Only 3 hearts",width/100, height/2.1);
+  text("You have to complete 5 rides to win",width/100, height/3.5);
+  text("If you use all your hearts then you will lose this game",width/100, height/3.2);
+  text("You have Only 3 hearts",width/100, height/3);
   pop();
 
 }
@@ -249,18 +249,18 @@ function crash(driver, obs) {
   death++;
 }
 
-function spawnRide() {console.log(ride4);
+function spawnRide() {
   if (frameCount % 200 === 0) {
     var num = Math.round(random(1, 2));
     if (num === 1) {
-      ride3 = createSprite(width/3.1, height/1000);
+      ride3 = createSprite(width/2.8, height/1000);
       ride3.velocityY += 3;
       ride3.addImage(circle);
       ride3.scale = 0.8;
       ride3.lifetime = 400;
       rideGroup2.add(ride3);
     } else if (num === 2) {
-      var ride = createSprite(width/3.1, height/1000);
+      var ride = createSprite(width/2.8, height/1000);
       ride.velocityY += 3;
 
       var rand = Math.round(random(1, 3));
@@ -282,14 +282,14 @@ function spawnRide() {console.log(ride4);
     if (frameCount % 300 === 0) {
       var num = Math.round(random(1, 2));
       if (num === 1) {
-        ride4 = createSprite(width/1.48, height/1000);
+        ride4 = createSprite(width/1.56, height/1000);
         ride4.velocityY += 3;
         ride4.addImage(circle);
         ride4.scale = 0.8;
         ride4.lifetime = 400
         rideGroup2.add(ride4);
       } else if (num === 2) {
-        var ride2 = createSprite(width/1.48, height/1000);
+        var ride2 = createSprite(width/1.56, height/1000);
 
         var rand = Math.round(random(1, 3));
         switch (rand) {
@@ -313,7 +313,7 @@ function spawnRide() {console.log(ride4);
 
 function spawnCar() {
   if (frameCount % 700=== 0) {
-    var obs = createSprite(width/2.5, height/1000);
+    var obs = createSprite(width/2.3, height/1000);
 
     var rand = Math.round(random(1, 2));
     switch (rand) {
@@ -323,13 +323,14 @@ function spawnCar() {
         break;
       default: break;
     }
-
+    
+    obs.scale = width/2500;
     obs.velocityY += 3;
     obs.lifetime = 400;
     carGroup.add(obs);
   }
   if (frameCount % 800 === 0) {
-    var obss = createSprite(width/1.65, height/0.9);
+    var obss = createSprite(width/1.75, height/0.9);
 
     var rand = Math.round(random(1, 2));
     switch (rand) {
@@ -340,6 +341,7 @@ function spawnCar() {
       default: break;
     }
 
+    obss.scale = width/2500;
     obss.velocityY -= 3;
     obss.lifetime = 400;
     carGroup.add(obss);
@@ -348,19 +350,19 @@ function spawnCar() {
 
 function dropPoint() {
   if (frameCount % 500 === 0) {
-    drop = createSprite(width/2.56, height/1000);
+    drop = createSprite(width/2.42, height/1000);
     drop.velocityY += 3;
     drop.addImage(dropimg);
-    drop.scale = 0.7;
+    drop.scale = width/5000;
     driver.depth += drop.depth;
     drop.lifetime = 400;
     dropGroup.add(drop);
   }
   if (frameCount % 700 === 0) {
-    drop2 = createSprite(width/1.65,height/1000);
+    drop2 = createSprite(width/1.72,height/1000);
     drop2.velocityY += 3;
     drop2.addImage(dropimg);
-    drop2.scale = 0.7;
+    drop2.scale = width/5000;
     driver.depth += drop2.depth;
     drop2.lifetime = 400;
     dropGroup.add(drop2);
